@@ -3,7 +3,15 @@
     <button (click)="changeLang(lang==='en'?'ar':'en')">{{lang==='en'?'عربي':"Englsh"}}</button>
   </div>
   <h1>{{'title'|translate}}</h1>
-
+  <div>
+    <button [disabled]="selection.length<=0">{{'delete'|translate}}</button>
+  </div>
+  <div>{{'userServer'|translate}}
+    <mat-checkbox
+    [checked]="userServer"
+    (change)="changeUsedMethod($event)"
+    ></mat-checkbox>
+  </div>
   <app-grid (actionHandler)="actionHandlers($event)" 
             (selectionChange)="updateSelectedElement($event)"
             (sortHandler)="handleSorting($event)"

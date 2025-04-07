@@ -6,17 +6,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActionEvent, GridConfig } from './_models/grid-config';
 import { CommonModule } from '@angular/common';
 import { subscribeOn, Subscription } from 'rxjs';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,CommonModule, TranslateModule, GridComponent,MatIconModule],
+  imports: [RouterOutlet,CommonModule, TranslateModule, GridComponent,MatIconModule,MatCheckboxModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit,OnDestroy {
   title = 'alqemam-task-2';
   subs:Subscription = new Subscription()
+  userServer:boolean=false
   lang:string = "en"
   pageSize:number = 10
   pageNumber:number = 1
@@ -57,7 +59,12 @@ export class AppComponent implements OnInit,OnDestroy {
     this.subs.unsubscribe()
   }
 
-
+  changeUsedMethod(event:MatCheckboxChange){
+    if (event.checked)
+      this.userServer = true
+    else
+    this.userServer = false
+  }
   changeLang(langCode:string){
     this.translateService.use(langCode)
   }
