@@ -1,0 +1,20 @@
+th>div{
+    display: flex;
+    align-items: center;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.cursor-default{
+    cursor: default;
+}
+.fit-column {
+    white-space: nowrap;
+    width: 1%;
+}
+table,th{
+    vertical-align: middle;
+}
+.center-cell{
+    text-align: center;
+}

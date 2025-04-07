@@ -1,0 +1,18 @@
+<main [dir]="lang=='ar'?'rtl':'ltr'">
+  <div>
+    <button (click)="changeLang(lang==='en'?'ar':'en')">{{lang==='en'?'عربي':"Englsh"}}</button>
+  </div>
+  <h1>{{'title'|translate}}</h1>
+
+  <app-grid (actionHandler)="actionHandlers($event)" 
+            (selectionChange)="updateSelectedElement($event)"
+            (sortHandler)="handleSorting($event)"
+            (pageChangeHandler)="getItems($event)"
+            [pageNumber]="pageNumber"
+            [pageSize]="pageSize"
+            [rowCounts]="rowCounts"
+            [canSelect]="true"
+            [dataSource]="data"
+            [gridConfig]="config"
+            ></app-grid>
+</main>

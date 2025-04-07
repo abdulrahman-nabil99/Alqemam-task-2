@@ -1,0 +1,55 @@
+
+<table class="table table-bordered table-striped cursor-default">
+    <thead>
+        <tr>
+            <th class="fit-column" *ngIf="canSelect">
+                <mat-checkbox
+                class="example-margin"
+                [checked]="isAllSelected()"
+                [indeterminate]="!isAllSelected()&& selection.length>0"
+                (change)="masterBoxChange($event)"
+                ></mat-checkbox>
+            </th>
+            <th class="fit-column">
+                <div >
+                    {{'position' | translate}}</div>
+            </th>
+            <th *ngFor="let col of gridConfig.columns;">
+                <div (click)="handleSort(col)" [ngClass]="{'cursor-pointer':col.isSortable}">
+                    @if (col.isSortable) {
+                        <mat-icon>swap_vert</mat-icon>
+                    }
+                    {{col.header | translate}}</div>
+            </th>
+            <th class="center-cell"  *ngIf="gridConfig.actions?.length">
+                {{'actions'|translate}}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let row of dataSource;let i =index;">
+            <td *ngIf="canSelect">
+                <mat-checkbox (change)="boxChange($event,row)" [checked]="elementSelected(row)" ></mat-checkbox>
+            </td>
+            <td>{{((pageNumber-1)*pageSize) +i +1}}</td>
+            <td *ngFor="let col of gridConfig.columns;">{{row[col.key]}}</td>
+            <td class="center-cell"  *ngIf="gridConfig.actions?.length">
+                <span *ngFor="let action of gridConfig.actions">
+                    <button *ngIf="!action.isConditional || (action.isConditional && action.condition && action.condition(row))"
+                    (click)="handleAction(action.actionName,row)">
+                        {{action.actionName|translate}}
+                    </button>
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<mat-paginator [length]="rowCounts"
+              [pageSize]="pageSize"
+              [pageIndex]="pageNumber-1"
+              (page)="pageChange($event)"
+              [hidePageSize]="true"
+              [showFirstLastButtons]="true"
+              >
+</mat-paginator>
