@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { ActionEvent, GridColumn, GridConfig } from '../../_models/grid-config';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { GridColumn, GridConfig } from '../../_models/grid-config';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -22,11 +22,11 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   @Input() gridConfig!:GridConfig<T>
   @Input() selectMode:SelectMode = SelectMode.CURRENT_PAGE
   @Input() workingMode:WorkingMode = WorkingMode.SERVER
+  @Input() pageSize:number =10;
   
   selection:any[] = []
   dataSource:any[] = []
   response!:ResponseModel<T>
-  pageSize:number =10;
   pageNumber:number =1;
   rowCounts:number =0;
   sortDirection:string = 'asc'

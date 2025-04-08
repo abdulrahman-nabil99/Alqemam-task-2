@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="canSelect">
     <button [disabled]="selection.length<=0 || deleting" (click)="deleteSelected()">{{'delete'|translate}}</button>
 </div>
 

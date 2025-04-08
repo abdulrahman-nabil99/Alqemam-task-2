@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule,FormsModule ,TranslateModule, GridComponent,MatIconModule,MatCheckboxModule,CustomSelectComponent],
+  imports: [CommonModule,FormsModule ,TranslateModule, GridComponent,CustomSelectComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -42,6 +42,43 @@ export class AppComponent implements OnInit,OnDestroy {
       //   enKey:"id",
       //   isSortable:true
       // },
+      {
+        defination:"name",
+        header:"employee.name",
+        arKey:"fullNameAr",
+        enKey:"fullNameEn",
+        isSortable:true
+      },
+      {
+        defination:"department",
+        header:"employee.department",
+        arKey:"departmentAr",
+        enKey:"departmentEn",
+        isSortable:true
+      },
+    ],
+    actions:[
+      {
+        actionName:"edit",
+        isConditional:false
+      },
+      {
+        actionName:"delete",
+        isConditional:true,
+        condition:(element:any)=> element["id"]>3 && element["id"]<15
+      }
+    ]
+  }
+  config2:GridConfig<Employee>= {
+    apiService:inject(EmployeeService),
+    columns :[
+      {
+        defination:"id",
+        header:"employee.id",
+        arKey:"id",
+        enKey:"id",
+        isSortable:true
+      },
       {
         defination:"name",
         header:"employee.name",
