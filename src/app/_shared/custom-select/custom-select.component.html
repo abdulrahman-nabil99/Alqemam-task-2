@@ -1,0 +1,17 @@
+<div class="select-container">
+  <div class="custom-select" (click)="toggleDropdown()">
+    <div class="selected">{{ selectedLabel }}</div>
+    <div class="arrow">&#9662;</div>
+  </div>
+    
+  <ul class="options" *ngIf="isOpen">
+    <li
+      *ngFor="let option of options"
+      (click)="selectOption(option)"
+      [class.selected]="option.value === selectedOption"
+    >
+      {{ option.label }}
+    </li>
+  </ul>
+</div>
+  

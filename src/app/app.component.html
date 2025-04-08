@@ -3,24 +3,26 @@
     <button (click)="changeLang(lang==='en'?'ar':'en')">{{lang==='en'?'عربي':"Englsh"}}</button>
   </div>
   <h1>{{'title'|translate}}</h1>
-  <div>
-    <button [disabled]="selection.length<=0">{{'delete'|translate}}</button>
+
+  <div class="mode-div">{{'mode'|translate}}
+    <app-custom-select class="ddl"
+      [options]="workingMods"
+      placeholder="Mode"
+      [selectedOption]="selectedMode"
+      [(ngModel)]="selectedMode"
+    ></app-custom-select>
   </div>
-  <div>{{'userServer'|translate}}
-    <mat-checkbox
-    [checked]="userServer"
-    (change)="changeUsedMethod($event)"
-    ></mat-checkbox>
+  <div class="mode-div">{{'selectMode'|translate}}
+    <app-custom-select class="ddl"
+      [options]="selectModes"
+      placeholder="Select Mode"
+      [selectedOption]="selectMode"
+      [(ngModel)]="selectMode"
+    ></app-custom-select>
   </div>
-  <app-grid (actionHandler)="actionHandlers($event)" 
-            (selectionChange)="updateSelectedElement($event)"
-            (sortHandler)="handleSorting($event)"
-            (pageChangeHandler)="getItems($event)"
-            [pageNumber]="pageNumber"
-            [pageSize]="pageSize"
-            [rowCounts]="rowCounts"
-            [canSelect]="true"
-            [dataSource]="data"
+  <app-grid [canSelect]="true"
             [gridConfig]="config"
-            ></app-grid>
+            [selectMode]="selectMode"
+            [workingMode]="selectedMode"
+  ></app-grid>
 </main>

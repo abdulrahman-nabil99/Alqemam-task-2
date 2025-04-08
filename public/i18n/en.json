@@ -1,11 +1,16 @@
 {
     "title":"Title",
     "position":"#",
-    "name":"Name",
-    "age":"Age",
     "actions":"Actions",
     "edit":"Edit",
     "delete":"Delete",
-    "userServer":"User Server"
-
+    "mode":"Working Mode",
+    "selectMode":"Select Mode",
+    "noData":"No Data To Show",
+    "selectOption":"Select",
+    "selecetMode":"Select Mode",
+    "employee":{
+        "name":"Name",
+        "department":"Department"
+    }
 }

@@ -1,12 +1,16 @@
-export interface GridConfig {
+import { IAPIService } from "../_services/iapi.service"
+
+export interface GridConfig<T> {
     columns:GridColumn[],
-    actions?:GridAction[]
+    actions?:GridAction[],
+    apiService:IAPIService<T>
 }
 
 export interface GridColumn{
     defination:string,
     header:string,
-    key:string,
+    arKey:string,
+    enKey:string,
     isSortable:boolean
 
 }

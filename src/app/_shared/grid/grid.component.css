@@ -1,3 +1,6 @@
+table{
+    user-select: none;
+}
 th>div{
     display: flex;
     align-items: center;
@@ -16,5 +19,9 @@ table,th{
     vertical-align: middle;
 }
 .center-cell{
+    text-align: center;
+}
+.no-data{
+    font-size: 24px;
     text-align: center;
 }

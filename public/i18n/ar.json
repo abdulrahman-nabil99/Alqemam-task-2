@@ -1,10 +1,16 @@
 {
     "title":"عنوان",
     "position":"م",
-    "name": "الإسم",
-    "age":"العمر",
     "actions":"الإجراءات",
     "edit":"تعديل",
     "delete":"حذف",
-    "userServer":"إستخدم السيرفر"
+    "mode":"طريقة التشغيل",
+    "selectMode":"طريقة التحديد",
+    "noData":"لا يوجد بيانات لعرضها",
+    "selectOption":"إختر",
+    "selecetMode":"",
+    "employee":{
+        "name":"الإسم",
+        "department":"القسم"
+    }
 }

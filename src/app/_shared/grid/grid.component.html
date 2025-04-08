@@ -1,3 +1,6 @@
+<div>
+    <button [disabled]="selection.length<=0 || deleting" (click)="deleteSelected()">{{'delete'|translate}}</button>
+</div>
 
 <table class="table table-bordered table-striped cursor-default">
     <thead>
@@ -27,12 +30,17 @@
         </tr>
     </thead>
     <tbody>
+        <tr *ngIf="dataSource.length<=0">
+            <td class="no-data" [colSpan]="1 + (canSelect?1:0) + gridConfig.columns.length + (gridConfig.actions && gridConfig.actions.length>0 ? 1:0)">
+                {{'noData'|translate}}
+            </td>
+        </tr>
         <tr *ngFor="let row of dataSource;let i =index;">
             <td *ngIf="canSelect">
                 <mat-checkbox (change)="boxChange($event,row)" [checked]="elementSelected(row)" ></mat-checkbox>
             </td>
             <td>{{((pageNumber-1)*pageSize) +i +1}}</td>
-            <td *ngFor="let col of gridConfig.columns;">{{row[col.key]}}</td>
+            <td *ngFor="let col of gridConfig.columns;">{{row[langCode=='ar'?col.arKey:col.enKey]}}</td>
             <td class="center-cell"  *ngIf="gridConfig.actions?.length">
                 <span *ngFor="let action of gridConfig.actions">
                     <button *ngIf="!action.isConditional || (action.isConditional && action.condition && action.condition(row))"

@@ -17,3 +17,19 @@ button:disabled{
     filter: grayscale(0.8);
     cursor: not-allowed;
 }
+button:hover:not(:disabled){
+    filter: contrast(1.2);
+}
+main{
+    width: 1200px;
+    margin: 60px auto;
+}
+.mode-div{
+    display: flex;
+    align-items: center ;
+    width: 300px;
+    justify-content: space-between;
+    .ddl{
+        width: 60%;
+    }
+}
