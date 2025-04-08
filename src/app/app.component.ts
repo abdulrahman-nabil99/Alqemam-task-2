@@ -2,12 +2,12 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GridComponent } from "./_shared/grid/grid.component";
 import { MatIconModule } from '@angular/material/icon';
-import { ActionEvent, GridColumn, GridConfig } from './_models/grid-config';
+import { GridConfig } from './_models/grid-config';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ResponseModel, SelectOption } from './_models/shared';
-import { Employee, RequestModlel } from './_models/employee';
+import { Employee} from './_models/employee';
 import { EmployeeService } from './_services/employee.service';
 import { CustomSelectComponent } from './_shared/custom-select/custom-select.component';
 import { SelectMode, WorkingMode } from './enum/mode';
@@ -27,19 +27,11 @@ export class AppComponent implements OnInit,OnDestroy {
   subs:Subscription = new Subscription()
   selectedMode:WorkingMode = WorkingMode.CLIENT
   workingMods!:SelectOption[] 
+
   selectMode :SelectMode = SelectMode.ALL_DATA;
   selectModes:SelectOption[] = []
-  deleting:boolean = false
-  
   lang:string = "en"
-  pageSize:number = 10
-  pageNumber:number = 1
-  rowCounts:number = 0;
-  sortDirection:string = 'asc'
-  sortColumn:string = ''
-  response!:ResponseModel<Employee>
-  data:Employee[] = []
-  selection:any[] = []
+
   config:GridConfig<Employee>= {
     apiService:inject(EmployeeService),
     columns :[
@@ -80,7 +72,6 @@ export class AppComponent implements OnInit,OnDestroy {
 
   constructor(
     private translateService:TranslateService,
-    private employeeService:EmployeeService
   ){
     const lang = localStorage.getItem('lang') ?? 'en'
     this.translateService.use(lang)
