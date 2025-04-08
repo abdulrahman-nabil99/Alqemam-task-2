@@ -25,16 +25,16 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   
   selection:any[] = []
   dataSource:any[] = []
+  response!:ResponseModel<T>
   pageSize:number =10;
   pageNumber:number =1;
   rowCounts:number =0;
   sortDirection:string = 'asc'
   sortColumn:string = ''
   langCode!:string
+
   private subs:Subscription= new Subscription()
   deleting:boolean = false
-
-  response!:ResponseModel<T>
 
   constructor(
     private translateService:TranslateService,
@@ -48,6 +48,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       this.getItems()
     })
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['workingMode']) {
       this.getItems()
@@ -55,15 +56,12 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     this.cdr.detectChanges()
   }
   handleAction(action:string,element:any){
-    this.actionHandlers({actionName:action,element})
-  }
-  private actionHandlers(action:ActionEvent){
-    if (action.actionName ==='edit')
+    if (action ==='edit')
       alert("No Logic for Editing")
-    else if (action.actionName ==='delete'){
+    else if (action ==='delete'){
       const res = confirm("Deleting 1 Item")
       if (!res) return;
-      this.gridConfig.apiService.delete([action.element["id"]])
+      this.gridConfig.apiService.delete([element["id"]])
       this.selection = []
       this.pageNumber = 1
       this.getItems()
@@ -78,9 +76,11 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       this.selection.splice(index,1)
     }
   }
+
   elementSelected(element:any){
     return this.selection.includes(element)
   }
+
   masterBoxChange(event:MatCheckboxChange){
     if(event.checked){
       if(this.selectMode == SelectMode.CURRENT_PAGE)
@@ -89,7 +89,8 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
         this.selection = [...this.response.data]
     }else{
       this.selection = []
-    }  }
+    }  
+  }
 
   isAllSelected(){
     if (this.selectMode === SelectMode.ALL_DATA)
@@ -148,6 +149,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     this.dataSource = this.response.data?.slice(startIndex, endIndex) ?? [];
     this.rowCounts = this.response.rowCounts ?? 0
   }
+
   private applySorting() {
     if (!this.response.data || this.response.data.length <= 0 || this.sortColumn.length <= 0) return;
   
@@ -170,7 +172,6 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       if (x instanceof Date && y instanceof Date) {
         return x.getTime() - y.getTime();
       }
-    
       // others
       return 0;
     });
@@ -201,5 +202,4 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   ngOnDestroy(): void {
     this.subs.unsubscribe()
   }
-  
 }
