@@ -24,14 +24,16 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   @Input() workingMode:WorkingMode = WorkingMode.SERVER
   @Input() pageSize:number =10;
   
-  selection:any[] = []
-  dataSource:any[] = []
+  selection:T[] = []
+  dataSource:T[] = []
   response!:ResponseModel<T>
   pageNumber:number =1;
   rowCounts:number =0;
   sortDirection:string = 'asc'
   sortColumn:string = ''
   langCode!:string
+  isAllSelectedChecked:boolean = false
+  excludedRows:T[] = []
 
   private subs:Subscription= new Subscription()
   deleting:boolean = false
@@ -51,10 +53,18 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['workingMode']) {
+      this.resetSelections()
       this.getItems()
     }
     this.cdr.detectChanges()
   }
+
+  private resetSelections(){
+    this.selection = []
+    this.excludedRows = []
+    this.isAllSelectedChecked = false
+  }
+
   handleAction(action:string,element:any){
     if (action ==='edit')
       alert("No Logic for Editing")
@@ -62,7 +72,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       const res = confirm("Deleting 1 Item")
       if (!res) return;
       this.gridConfig.apiService.delete([element["id"]])
-      this.selection = []
+      this.resetSelections()
       this.pageNumber = 1
       this.getItems()
     }
@@ -70,14 +80,28 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
 
   boxChange(event:MatCheckboxChange,element:any){
     if (event.checked && !this.selection.includes(element))
+    {
+      if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA){
+        const exIndex = this.excludedRows.findIndex(row=>row===element)
+        this.excludedRows.splice(exIndex,1)
+      }
       this.selection.push(element)
+    }
     else {
+      if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA){
+        this.excludedRows.push(element)
+        if (this.excludedRows.length === this.rowCounts){
+          this.resetSelections()
+        }
+      }
       const index = this.selection.indexOf(element)
       this.selection.splice(index,1)
     }
   }
 
   elementSelected(element:any){
+    if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA)
+      return(this.isAllSelectedChecked && !this.excludedRows.includes(element))
     return this.selection.includes(element)
   }
 
@@ -85,16 +109,23 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     if(event.checked){
       if(this.selectMode == SelectMode.CURRENT_PAGE)
         this.selection = [...this.dataSource]
-      else if(this.response.data) 
+      else if(this.response.data) {
+        this.isAllSelectedChecked = true
+        this.excludedRows = []
         this.selection = [...this.response.data]
+      }
     }else{
+      this.isAllSelectedChecked = false
+      this.excludedRows = []
       this.selection = []
     }  
   }
 
   isAllSelected(){
-    if (this.selectMode === SelectMode.ALL_DATA)
+    if (this.selectMode === SelectMode.ALL_DATA && this.workingMode === WorkingMode.CLIENT)
       return this.selection.length == this.rowCounts
+    else if (this.selectMode === SelectMode.ALL_DATA && this.workingMode === WorkingMode.SERVER)
+      return this.isAllSelectedChecked && this.excludedRows.length <=0
     for (let i = 0; i <this.dataSource.length;i++){
       if (!this.selection.includes(this.dataSource[i]))
         return false
@@ -103,7 +134,6 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   }
 
   handleSort(col:GridColumn){
-    if (!col.isSortable) return
     if (!col.isSortable)
       return
     this.sortDirection = this.sortDirection==='desc'?'asc':'desc'
@@ -185,13 +215,14 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   deleteSelected() {
     this.deleting = true;
     try {
-      if (this.selection.length <= 0) return;
-      const result = confirm(`Deleting ${this.selection.length} Item`);
+      if (this.selection.length <= 0 && !this.isAllSelectedChecked) return;
+      const result = 
+      confirm(`Deleting ${this.selectMode === SelectMode.ALL_DATA && this.workingMode === WorkingMode.SERVER? this.rowCounts - this.excludedRows.length :this.selection.length} Item`);
   
       if (!result) return;
     
       this.gridConfig.apiService.delete(this.selection.map(el => el["id"]));
-      this.selection = [];
+      this.resetSelections()
       this.pageNumber = 1;
       this.getItems();
     } finally {

@@ -1,12 +1,10 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GridComponent } from "./_shared/grid/grid.component";
-import { MatIconModule } from '@angular/material/icon';
 import { GridConfig } from './_models/grid-config';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ResponseModel, SelectOption } from './_models/shared';
+import { SelectOption } from './_models/shared';
 import { Employee} from './_models/employee';
 import { EmployeeService } from './_services/employee.service';
 import { CustomSelectComponent } from './_shared/custom-select/custom-select.component';
@@ -42,43 +40,6 @@ export class AppComponent implements OnInit,OnDestroy {
       //   enKey:"id",
       //   isSortable:true
       // },
-      {
-        defination:"name",
-        header:"employee.name",
-        arKey:"fullNameAr",
-        enKey:"fullNameEn",
-        isSortable:true
-      },
-      {
-        defination:"department",
-        header:"employee.department",
-        arKey:"departmentAr",
-        enKey:"departmentEn",
-        isSortable:true
-      },
-    ],
-    actions:[
-      {
-        actionName:"edit",
-        isConditional:false
-      },
-      {
-        actionName:"delete",
-        isConditional:true,
-        condition:(element:any)=> element["id"]>3 && element["id"]<15
-      }
-    ]
-  }
-  config2:GridConfig<Employee>= {
-    apiService:inject(EmployeeService),
-    columns :[
-      {
-        defination:"id",
-        header:"employee.id",
-        arKey:"id",
-        enKey:"id",
-        isSortable:true
-      },
       {
         defination:"name",
         header:"employee.name",
