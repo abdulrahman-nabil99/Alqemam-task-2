@@ -71,7 +71,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     else if (action ==='delete'){
       const res = confirm("Deleting 1 Item")
       if (!res) return;
-      this.gridConfig.apiService.delete([element["id"]])
+      this.gridConfig.apiService.delete(false,[element["id"]])
       this.resetSelections()
       this.pageNumber = 1
       this.getItems()
@@ -221,7 +221,8 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   
       if (!result) return;
     
-      this.gridConfig.apiService.delete(this.selection.map(el => el["id"]));
+      this.gridConfig.apiService
+      .delete(this.isAllSelectedChecked,this.selection.map(el => el["id"]),this.excludedRows.map(el=>el["id"]));
       this.resetSelections()
       this.pageNumber = 1;
       this.getItems();

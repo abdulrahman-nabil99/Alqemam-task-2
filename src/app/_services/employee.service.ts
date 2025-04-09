@@ -63,12 +63,18 @@ export class EmployeeService implements IAPIService<Employee> {
       return response
     }
   }
-  delete(ids:number[]){
+
+  delete(isAllSelected:boolean,ids:number[],excludedId?:number[]){
+    if (isAllSelected){
+      ids = this.dummyData.filter(el=> !excludedId?.includes(el["id"]))
+        .map(el=>el["id"]);
+    }
     ids.forEach(id=>{
       const index = this.dummyData.findIndex(el=>el.id ===id)
       this.dummyData.splice(index,1)
     })
   }
+
   addEdit(employee:Employee){
 
   }
