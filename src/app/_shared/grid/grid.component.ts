@@ -6,9 +6,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {MatCheckboxChange, MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { SelectMode, WorkingMode} from '../../enum/mode';
-import { RequestModlel } from '../../_models/employee';
 import { Subscription } from 'rxjs';
-import { ResponseModel } from '../../_models/shared';
+import { DeleteModel, RequestModlel, ResponseModel } from '../../_models/shared';
 
 
 @Component({
@@ -53,8 +52,13 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['workingMode']) {
+      if (changes['workingMode'].previousValue && 
+          changes['workingMode'].previousValue !== changes['workingMode'].currentValue)
+        this.getItems()
       this.resetSelections()
-      this.getItems()
+    }
+    if (changes['selectMode']) {
+      this.resetSelections()
     }
     this.cdr.detectChanges()
   }
@@ -71,24 +75,33 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     else if (action ==='delete'){
       const res = confirm("Deleting 1 Item")
       if (!res) return;
-      this.gridConfig.apiService.delete(false,[element["id"]])
-      this.resetSelections()
-      this.pageNumber = 1
-      this.getItems()
+      this.subs.add(
+        this.gridConfig.apiService.delete({isAllSelected:false,ids:[element["id"]]}).subscribe({
+          next: res=>{
+            this.resetSelections()
+            this.pageNumber = 1
+            this.getItems()
+          },
+          error: err=>{
+
+          }
+        })
+      )
+
     }
   }
 
   boxChange(event:MatCheckboxChange,element:any){
     if (event.checked && !this.selection.includes(element))
     {
-      if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA){
+      if(this.selectMode === SelectMode.ALL_DATA){
         const exIndex = this.excludedRows.findIndex(row=>row===element)
         this.excludedRows.splice(exIndex,1)
       }
       this.selection.push(element)
     }
     else {
-      if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA){
+      if(this.selectMode === SelectMode.ALL_DATA){
         this.excludedRows.push(element)
         if (this.excludedRows.length === this.rowCounts){
           this.resetSelections()
@@ -101,8 +114,8 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
 
   elementSelected(element:any){
     if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA)
-      return(this.isAllSelectedChecked && !this.excludedRows.includes(element))
-    return this.selection.includes(element)
+      return(this.isAllSelectedChecked && !this.excludedRows.some(el=>el["id"]===element["id"]))
+    return this.selection.some(el=>el["id"]===element["id"])
   }
 
   masterBoxChange(event:MatCheckboxChange){
@@ -126,6 +139,9 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       return this.selection.length == this.rowCounts
     else if (this.selectMode === SelectMode.ALL_DATA && this.workingMode === WorkingMode.SERVER)
       return this.isAllSelectedChecked && this.excludedRows.length <=0
+
+    // if (!this.selection.every(el=>this.dataSource.includes(el)))
+    //   return false
     for (let i = 0; i <this.dataSource.length;i++){
       if (!this.selection.includes(this.dataSource[i]))
         return false
@@ -150,7 +166,12 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     if (this.selectMode === SelectMode.CURRENT_PAGE){
       this.selection = []
     }
-    this.getItems(page.pageIndex+1) // index-zero
+    if (this.workingMode === WorkingMode.CLIENT){
+      this.pageNumber = page.pageIndex+1 || this.pageNumber
+      this.applyPagination()
+    }
+    else
+      this.getItems(page.pageIndex+1) // index-zero
   }
 
   private getItems(pageNo?:number){
@@ -163,13 +184,28 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       sortDirection:this.sortDirection
     }
     if (this.workingMode == WorkingMode.CLIENT){
-      this.response = this.gridConfig.apiService.getData(model) // check if there is already data use it and dod not do another request
-      this.applySorting()
-      this.applyPagination()
+      this.subs.add(
+        this.gridConfig.apiService.getData(model).subscribe({
+          next: res=> {
+            this.response = res;
+            this.applySorting()
+            this.applyPagination()
+          }
+        })
+      )
     } else{
-      this.response = this.gridConfig.apiService.getData(model)
-      this.dataSource = this.response.data ?? []
-      this.rowCounts = this.response.rowCounts
+      this.subs.add(
+        this.gridConfig.apiService.getData(model).subscribe({
+          next:res=>{
+            this.response = res;
+            this.dataSource = this.response.data ?? []
+            this.rowCounts = this.response.rowCounts ?? 0
+          },
+          error:err=>{
+
+          }
+        })
+      )
     }
   }
 
@@ -220,15 +256,33 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       confirm(`Deleting ${this.selectMode === SelectMode.ALL_DATA && this.workingMode === WorkingMode.SERVER? this.rowCounts - this.excludedRows.length :this.selection.length} Item`);
   
       if (!result) return;
-    
-      this.gridConfig.apiService
-      .delete(this.isAllSelectedChecked,this.selection.map(el => el["id"]),this.excludedRows.map(el=>el["id"]));
-      this.resetSelections()
-      this.pageNumber = 1;
-      this.getItems();
+      const deleteModel:DeleteModel = {
+        isAllSelected: this.isAllSelectedChecked,
+        ids: this.selection.map(el => el["id"]),
+        excludedIds: this.excludedRows.map(el=>el["id"])
+      }
+      this.subs.add(
+        this.gridConfig.apiService.delete(deleteModel).subscribe({
+          next:res=>{
+            this.resetSelections()
+            this.pageNumber = 1;
+            this.getItems();
+          },
+          error:err=>{
+            
+          }
+        })
+      )
+
     } finally {
       this.deleting = false;
     }
+  }
+
+  getSortIcon(col:GridColumn):string{
+    if (this.sortColumn=== col.arKey || this.sortColumn === col.enKey)
+      return this.sortDirection ==="desc"? "arrow_downward":"arrow_upward"
+    return "swap_vert"
   }
   
   ngOnDestroy(): void {

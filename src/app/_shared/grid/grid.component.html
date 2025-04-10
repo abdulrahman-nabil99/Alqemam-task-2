@@ -20,7 +20,7 @@
             <th *ngFor="let col of gridConfig.columns;">
                 <div (click)="handleSort(col)" [ngClass]="{'cursor-pointer':col.isSortable}">
                     @if (col.isSortable) {
-                        <mat-icon>swap_vert</mat-icon>
+                        <mat-icon>{{getSortIcon(col)}}</mat-icon>
                     }
                     {{col.header | translate}}</div>
             </th>

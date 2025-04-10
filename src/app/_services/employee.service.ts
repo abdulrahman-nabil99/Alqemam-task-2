@@ -1,9 +1,9 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Employee, RequestModlel } from '../_models/employee';
-import { ResponseModel } from '../_models/shared';
-import { WorkingMode } from '../enum/mode';
+import { Employee} from '../_models/employee';
+import { DeleteModel, RequestModlel, ResponseModel } from '../_models/shared';
 import { IAPIService } from './iapi.service';
+import { EMPLOYEES_END_POINT } from '../_models/Constants';
 
 @Injectable({
   providedIn: 'root'
@@ -46,77 +46,24 @@ export class EmployeeService implements IAPIService<Employee> {
   //#endregion
   constructor(private readonly client:HttpClient) { }
 
-  getData(model:RequestModlel):ResponseModel<Employee>{
-    const response:ResponseModel<Employee> = {
-      success:true,
-      rowCounts:this.dummyData.length,
-      data:[]
-    }
-    if (model.mode === WorkingMode.CLIENT)
-    {
-      response.data = this.dummyData
-      return response
-    } else{
-      this.applySorting(model)
-      let data = this.applyPagination(model)
-      response.data = data
-      return response
-    }
+  getData(model:RequestModlel){
+    return this.client.get<ResponseModel<Employee>>(
+      EMPLOYEES_END_POINT + "/GetEmployees" +
+      `?Mode=${model.mode}&PageSize=${model.pageSize}&PageNumber=${model.pageNumber}&SortColumn=${model.sortColumn}&SortDirection=${model.sortDirection}`
+    )
   }
 
-  delete(isAllSelected:boolean,ids:number[],excludedId?:number[]){
-    if (isAllSelected){
-      ids = this.dummyData.filter(el=> !excludedId?.includes(el["id"]))
-        .map(el=>el["id"]);
-    }
-    ids.forEach(id=>{
-      const index = this.dummyData.findIndex(el=>el.id ===id)
-      this.dummyData.splice(index,1)
-    })
+  delete(model:DeleteModel){
+    return this.client.delete<ResponseModel<number>>(
+      EMPLOYEES_END_POINT + "/DeleteEmployee",
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        body : model
+      }
+    )
   }
 
   addEdit(employee:Employee){
 
-  }
-
-
-  private applyPagination(model:RequestModlel){
-    const startIndex = (model.pageNumber - 1) * model.pageSize;
-    const endIndex = startIndex + model.pageSize;
-    const data = this.dummyData.slice(startIndex, endIndex) ?? [];
-    return data
-  }
-  private applySorting(model:RequestModlel) {
-    if (!this.dummyData || this.dummyData.length <= 0 || model.sortColumn.length <= 0) return;
-  
-    this.dummyData.sort((a, b) => {
-      let x = a[model.sortColumn];
-      let y = b[model.sortColumn];
-  
-      // string comparison
-      if (typeof x === 'string' && typeof y === 'string') {
-        x = x.toLowerCase();
-        y = y.toLowerCase();
-        return x < y ? -1 : x > y ? 1 : 0;
-      }
-  
-      // number comparison
-      if (typeof x === 'number' && typeof y === 'number') {
-        return x - y;
-      }
-  
-      // date comparison
-      if (x instanceof Date && y instanceof Date) {
-        return x.getTime() - y.getTime();
-      }
-  
-      // others
-      return 0;
-    });
-  
-    // Reverse data if descending order
-    if (model.sortDirection === 'desc') {
-      this.dummyData.reverse();
-    }
   }
 }
