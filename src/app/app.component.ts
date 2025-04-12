@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule,FormsModule ,TranslateModule, GridComponent,CustomSelectComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, GridComponent, CustomSelectComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

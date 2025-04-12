@@ -12,5 +12,12 @@
     "employee":{
         "name":"الإسم",
         "department":"القسم"
+    },
+    "paginator":{
+        "itemsPerPage":"عدد العناصر بالصفحة",
+        "currentRange":"{{range}} من {{count}} عنصر",
+        "next":"التالي",
+        "previous":"السابق",
+        "of" : "من"
     }
 }

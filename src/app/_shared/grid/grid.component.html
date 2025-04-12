@@ -53,11 +53,8 @@
     </tbody>
 </table>
 
-<mat-paginator [length]="rowCounts"
-              [pageSize]="pageSize"
-              [pageIndex]="pageNumber-1"
-              (page)="pageChange($event)"
-              [hidePageSize]="true"
-              [showFirstLastButtons]="true"
-              >
-</mat-paginator>
+<app-paginator [rowCount]="rowCounts"
+                [pageNumber]="pageNumber"
+                (onPageSizeChange)="changePageSize($event)"
+                (onPageChange)="pageChange($event)"
+ ></app-paginator>

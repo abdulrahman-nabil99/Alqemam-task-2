@@ -12,5 +12,12 @@
     "employee":{
         "name":"Name",
         "department":"Department"
+    },
+    "paginator":{
+        "itemsPerPage":"Items per page",
+        "currentRange":"{{range}} of {{count}} items",
+        "next":"Next",
+        "previous":"Previous",
+        "of" : "of"
     }
 }

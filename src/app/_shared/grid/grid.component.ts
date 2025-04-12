@@ -8,11 +8,12 @@ import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { SelectMode, WorkingMode} from '../../enum/mode';
 import { Subscription } from 'rxjs';
 import { DeleteModel, RequestModlel, ResponseModel } from '../../_models/shared';
+import { PaginatorComponent } from '../paginator/paginator.component';
 
 
 @Component({
   selector: 'app-grid',
-  imports: [MatIconModule,CommonModule,TranslateModule,MatCheckboxModule,MatPaginatorModule],
+  imports: [MatIconModule,CommonModule,TranslateModule,MatCheckboxModule,MatPaginatorModule,PaginatorComponent],
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.css'
 })
@@ -67,6 +68,13 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     this.selection = []
     this.excludedRows = []
     this.isAllSelectedChecked = false
+  }
+
+  changePageSize(pageSize:number){
+    this.pageSize = pageSize
+    this.pageNumber = 1;
+    this.resetSelections()
+    this.getItems();
   }
 
   handleAction(action:string,element:any){
@@ -162,16 +170,16 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     }
   }
 
-  pageChange(page:PageEvent){
+  pageChange(page:number){
     if (this.selectMode === SelectMode.CURRENT_PAGE){
       this.selection = []
     }
     if (this.workingMode === WorkingMode.CLIENT){
-      this.pageNumber = page.pageIndex+1 || this.pageNumber
+      this.pageNumber = page || this.pageNumber
       this.applyPagination()
     }
     else
-      this.getItems(page.pageIndex+1) // index-zero
+      this.getItems(page) // index-zero
   }
 
   private getItems(pageNo?:number){
