@@ -1,0 +1,32 @@
+#paginator{
+    user-select: none;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 3px;
+    background-color: #a5a3a33f;
+}
+#paginator>div{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+input[type=text]{
+    width: 50px;
+    text-align: center;
+    border: 3px;
+    border: 1px solid #5a595942;
+}
+input[type=text]:focus{
+    outline: none;
+}
+.page-btn{
+    font-weight: bold;
+    background-color: transparent;
+    border: none;
+    color: #85382a;
+}
+.page-btn:hover{
+    background-color: #75727231;
+}

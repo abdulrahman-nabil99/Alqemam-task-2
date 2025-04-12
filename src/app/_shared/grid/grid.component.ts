@@ -24,7 +24,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   @Input() workingMode:WorkingMode = WorkingMode.SERVER
   @Input() pageSize:number =10;
   
-  selection:T[] = []
+  selection:number[] = []
   dataSource:T[] = []
   response!:ResponseModel<T>
   pageNumber:number =1;
@@ -33,7 +33,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   sortColumn:string = ''
   langCode!:string
   isAllSelectedChecked:boolean = false
-  excludedRows:T[] = []
+  excludedRows:number[] = []
 
   private subs:Subscription= new Subscription()
   deleting:boolean = false
@@ -42,13 +42,12 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     private translateService:TranslateService,
     private cdr:ChangeDetectorRef
   ){
-
-  }
-  ngOnInit(): void {
     this.translateService.onLangChange.subscribe(res=>{
       this.langCode = res.lang
-      this.getItems()
     })
+  }
+  ngOnInit(): void {
+    this.getItems()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -99,46 +98,53 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     }
   }
 
-  boxChange(event:MatCheckboxChange,element:any){
-    if (event.checked && !this.selection.includes(element))
+  boxChange(event:MatCheckboxChange,element:T){
+    if (event.checked && !this.selection.includes(element["id"]))
     {
       if(this.selectMode === SelectMode.ALL_DATA){
-        const exIndex = this.excludedRows.findIndex(row=>row===element)
+        const exIndex = this.excludedRows.findIndex(id=>id===element["id"])
         this.excludedRows.splice(exIndex,1)
       }
-      this.selection.push(element)
+      this.selection.push(element["id"])
     }
     else {
       if(this.selectMode === SelectMode.ALL_DATA){
-        this.excludedRows.push(element)
+        this.excludedRows.push(element["id"])
         if (this.excludedRows.length === this.rowCounts){
           this.resetSelections()
         }
       }
-      const index = this.selection.indexOf(element)
+      const index = this.selection.indexOf(element["id"])
       this.selection.splice(index,1)
     }
   }
 
-  elementSelected(element:any){
+  elementSelected(element:T){
     if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA)
-      return(this.isAllSelectedChecked && !this.excludedRows.some(el=>el["id"]===element["id"]))
-    return this.selection.some(el=>el["id"]===element["id"])
+      return(this.isAllSelectedChecked && !this.excludedRows.some(id=>id===element["id"]))
+    return this.selection.some(id=>id===element["id"])
   }
 
   masterBoxChange(event:MatCheckboxChange){
     if(event.checked){
-      if(this.selectMode == SelectMode.CURRENT_PAGE)
-        this.selection = [...this.dataSource]
+      if(this.selectMode == SelectMode.CURRENT_PAGE){
+        const ids:number[] = [...this.selection,...this.dataSource.map(el=>el["id"])]
+        this.selection = [...new Set(ids)]
+      }
       else if(this.response.data) {
         this.isAllSelectedChecked = true
         this.excludedRows = []
-        this.selection = [...this.response.data]
+        this.selection = this.response.data.map(el=>el["id"])
       }
     }else{
-      this.isAllSelectedChecked = false
-      this.excludedRows = []
-      this.selection = []
+      if(this.selectMode == SelectMode.CURRENT_PAGE){
+        const ids = this.dataSource.map(el=>el["id"])
+        this.selection = this.selection.filter(id=>!ids.includes(id))
+      }else{
+        this.isAllSelectedChecked = false
+        this.excludedRows = []
+        this.selection = []
+      }
     }  
   }
 
@@ -148,12 +154,12 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     else if (this.selectMode === SelectMode.ALL_DATA && this.workingMode === WorkingMode.SERVER)
       return this.isAllSelectedChecked && this.excludedRows.length <=0
 
-    // if (!this.selection.every(el=>this.dataSource.includes(el)))
-    //   return false
-    for (let i = 0; i <this.dataSource.length;i++){
-      if (!this.selection.includes(this.dataSource[i]))
-        return false
-    }
+    if (!this.dataSource.every(el=>this.selection.includes(el["id"])))
+      return false
+    // for (let i = 0; i <this.dataSource.length;i++){
+    //   if (!this.selection.includes(this.dataSource[i]))
+    //     return false
+    // }
     return true
   }
 
@@ -172,14 +178,14 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
 
   pageChange(page:number){
     if (this.selectMode === SelectMode.CURRENT_PAGE){
-      this.selection = []
+      // this.selection = []
     }
     if (this.workingMode === WorkingMode.CLIENT){
       this.pageNumber = page || this.pageNumber
       this.applyPagination()
     }
     else
-      this.getItems(page) // index-zero
+      this.getItems(page)
   }
 
   private getItems(pageNo?:number){
@@ -266,8 +272,8 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       if (!result) return;
       const deleteModel:DeleteModel = {
         isAllSelected: this.isAllSelectedChecked,
-        ids: this.selection.map(el => el["id"]),
-        excludedIds: this.excludedRows.map(el=>el["id"])
+        ids: this.selection,
+        excludedIds: this.excludedRows
       }
       this.subs.add(
         this.gridConfig.apiService.delete(deleteModel).subscribe({

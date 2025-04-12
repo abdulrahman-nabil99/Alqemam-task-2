@@ -1,0 +1,21 @@
+<div id="paginator">
+    <div>
+        <span>
+            {{'paginator.itemsPerPage'|translate}}
+        </span>
+        <select dir="ltr" [value]="pageSize" (change)="changePageSize($event)">
+            <option *ngFor="let size of pageSizeOptions" [value]="size" [selected]="size===pageSize">
+                {{ size }}
+            </option>
+        </select>
+        <span>
+            {{'paginator.currentRange'|translate: {range: getRangeString(), count: rowCount}  }}
+        </span>
+    </div>
+    <div>
+        <button class="page-btn" type="button" [disabled]="pageNumber ===1" (click)="moveTo(pageNumber-1)">{{'paginator.previous'|translate}}</button>
+        <input type="text" appAllowNumbers [value]="pageNumber" (keyup.enter)="checkPageNumber($event)">
+        <span>{{"paginator.of"|translate}} {{totalPages}}</span>
+        <button class="page-btn" type="button" [disabled]="pageNumber === totalPages" (click)="moveTo(pageNumber+1)">{{'paginator.next'|translate}}</button>
+    </div>
+</div>
