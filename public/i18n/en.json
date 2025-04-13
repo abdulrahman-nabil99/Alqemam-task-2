@@ -11,7 +11,8 @@
     "selecetMode":"Select Mode",
     "employee":{
         "name":"Name",
-        "department":"Department"
+        "department":"Department",
+        "age":"Age"
     },
     "paginator":{
         "itemsPerPage":"Items per page",

@@ -45,6 +45,12 @@ export class AppComponent implements OnInit,OnDestroy {
         isSortable:true
       },
       {
+        defination:"age",
+        header:"employee.age",
+        getKey:(lang:string)=> "age",
+        isSortable:true
+      },
+      {
         defination:"department",
         header:"employee.department",
         getKey:(lang:string)=> lang==="ar"?"departmentAr":"departmentEn",

@@ -11,7 +11,8 @@
     "selecetMode":"",
     "employee":{
         "name":"الإسم",
-        "department":"القسم"
+        "department":"القسم",
+        "age":"العمر"
     },
     "paginator":{
         "itemsPerPage":"عدد العناصر بالصفحة",
