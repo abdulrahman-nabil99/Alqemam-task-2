@@ -3,21 +3,21 @@ import { IAPIService } from "../_services/iapi.service"
 export interface GridConfig<T> {
     columns:GridColumn[],
     actions?:GridAction[],
-    apiService:IAPIService<T>
+    apiService:IAPIService<T>,
+    defaultSortingDirection?:string,
+    defaultSortingColumn?:string
 }
 
 export interface GridColumn{
     defination:string,
     header:string,
-    arKey:string,
-    enKey:string,
+    getKey:(lang: string) => string,
     isSortable:boolean
-
 }
 export interface GridAction{
     actionName:string,
     isConditional:boolean,
-    condition?:Function
+    condition?:(element: any) => boolean
 }
 export interface ActionEvent{
     actionName:string,

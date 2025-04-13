@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GridComponent } from "./_shared/grid/grid.component";
-import { GridConfig } from './_models/grid-config';
+import { ActionEvent, GridConfig } from './_models/grid-config';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { SelectOption } from './_models/shared';
@@ -41,15 +41,13 @@ export class AppComponent implements OnInit,OnDestroy {
       {
         defination:"name",
         header:"employee.name",
-        arKey:"fullNameAr",
-        enKey:"fullNameEn",
+        getKey:(lang:string)=> lang==="ar"?"fullNameAr":"fullNameEn",
         isSortable:true
       },
       {
         defination:"department",
         header:"employee.department",
-        arKey:"departmentAr",
-        enKey:"departmentEn",
+        getKey:(lang:string)=> lang==="ar"?"departmentAr":"departmentEn",
         isSortable:true
       },
     ],
@@ -63,11 +61,14 @@ export class AppComponent implements OnInit,OnDestroy {
         isConditional:true,
         condition:(element:any)=> element["id"]>3 && element["id"]<15
       }
-    ]
+    ],
+    defaultSortingColumn : "",
+    defaultSortingDirection: "asc"
   }
 
   constructor(
     private translateService:TranslateService,
+    private employeeService:EmployeeService
   ){
     const lang = localStorage.getItem('lang') ?? 'en'
     this.translateService.use(lang)
@@ -90,6 +91,24 @@ export class AppComponent implements OnInit,OnDestroy {
   changeLang(langCode:string){
     this.translateService.use(langCode)
     localStorage.setItem('lang',langCode)
+  }
+
+  actionHandler(action:ActionEvent){
+    if (action.actionName ==='edit')
+      alert("No Logic for Editing")
+    else if (action.actionName ==='delete'){
+      const res = confirm("Deleting 1 Item")
+      if (!res) return;
+      this.subs.add(
+        this.employeeService.delete({isAllSelected:false,ids:[action.element["id"]]}).subscribe({
+          next: res=>{
+          },
+          error: err=>{
+          }
+        })
+      )
+
+    }
   }
 
   ngOnDestroy(): void {

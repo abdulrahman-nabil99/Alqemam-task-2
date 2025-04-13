@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { GridColumn, GridConfig } from '../../_models/grid-config';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ActionEvent, GridColumn, GridConfig } from '../../_models/grid-config';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -23,14 +23,15 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   @Input() selectMode:SelectMode = SelectMode.CURRENT_PAGE
   @Input() workingMode:WorkingMode = WorkingMode.SERVER
   @Input() pageSize:number =10;
+  @Output() actionHandler = new EventEmitter<ActionEvent>()
   
   selection:number[] = []
   dataSource:T[] = []
   response!:ResponseModel<T>
   pageNumber:number =1;
   rowCounts:number =0;
-  sortDirection:string = 'asc'
-  sortColumn:string = ''
+  sortDirection!:string
+  sortColumn!:string 
   langCode!:string
   isAllSelectedChecked:boolean = false
   excludedRows:number[] = []
@@ -47,6 +48,9 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     })
   }
   ngOnInit(): void {
+    this.sortDirection =this.gridConfig.defaultSortingDirection ?? "asc"
+    this.sortColumn =this.gridConfig.defaultSortingColumn ?? ""
+
     this.getItems()
   }
 
@@ -77,25 +81,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   }
 
   handleAction(action:string,element:any){
-    if (action ==='edit')
-      alert("No Logic for Editing")
-    else if (action ==='delete'){
-      const res = confirm("Deleting 1 Item")
-      if (!res) return;
-      this.subs.add(
-        this.gridConfig.apiService.delete({isAllSelected:false,ids:[element["id"]]}).subscribe({
-          next: res=>{
-            this.resetSelections()
-            this.pageNumber = 1
-            this.getItems()
-          },
-          error: err=>{
-
-          }
-        })
-      )
-
-    }
+    this.actionHandler.emit({actionName:action,element:element})
   }
 
   boxChange(event:MatCheckboxChange,element:T){
@@ -167,7 +153,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     if (!col.isSortable)
       return
     this.sortDirection = this.sortDirection==='desc'?'asc':'desc'
-    this.sortColumn = this.langCode == 'ar'? col.arKey:col.enKey
+    this.sortColumn = col.getKey(this.langCode)
     if (this.workingMode == WorkingMode.CLIENT){
       this.applySorting()
       this.applyPagination()
@@ -294,9 +280,14 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   }
 
   getSortIcon(col:GridColumn):string{
-    if (this.sortColumn=== col.arKey || this.sortColumn === col.enKey)
+    const keys= [col.getKey("ar"),col.getKey("en")]
+    if (keys.includes(this.sortColumn))
       return this.sortDirection ==="desc"? "arrow_downward":"arrow_upward"
     return "swap_vert"
+  }
+
+  getValue(col:GridColumn,element:T){
+    return element[col.getKey(this.langCode)]
   }
   
   ngOnDestroy(): void {

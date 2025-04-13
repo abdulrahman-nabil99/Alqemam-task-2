@@ -40,7 +40,7 @@
                 <mat-checkbox (change)="boxChange($event,row)" [checked]="elementSelected(row)" ></mat-checkbox>
             </td>
             <td>{{((pageNumber-1)*pageSize) +i +1}}</td>
-            <td *ngFor="let col of gridConfig.columns;">{{row[langCode=='ar'?col.arKey:col.enKey]}}</td>
+            <td *ngFor="let col of gridConfig.columns;">{{getValue(col,row)}}</td>
             <td class="center-cell"  *ngIf="gridConfig.actions?.length">
                 <span *ngFor="let action of gridConfig.actions">
                     <button *ngIf="!action.isConditional || (action.isConditional && action.condition && action.condition(row))"
