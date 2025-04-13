@@ -31,13 +31,6 @@ export class AppComponent implements OnInit,OnDestroy {
   config:GridConfig<Employee>= {
     apiService:inject(EmployeeService),
     columns :[
-      // {
-      //   defination:"id",
-      //   header:"employee.id",
-      //   arKey:"id",
-      //   enKey:"id",
-      //   isSortable:true
-      // },
       {
         defination:"name",
         header:"employee.name",
@@ -113,7 +106,6 @@ export class AppComponent implements OnInit,OnDestroy {
           }
         })
       )
-
     }
   }
 

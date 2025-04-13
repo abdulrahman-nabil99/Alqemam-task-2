@@ -290,6 +290,11 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     return element[col.getKey(this.langCode)]
   }
   
+  getColSpan(){
+    return 1 + (this.canSelect?1:0) + 
+            this.gridConfig.columns.length +
+            (this.gridConfig.actions && this.gridConfig.actions.length>0 ? 1:0)
+  }
   ngOnDestroy(): void {
     this.subs.unsubscribe()
   }

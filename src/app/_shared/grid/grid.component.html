@@ -31,7 +31,7 @@
     </thead>
     <tbody>
         <tr *ngIf="dataSource.length<=0">
-            <td class="no-data" [colSpan]="1 + (canSelect?1:0) + gridConfig.columns.length + (gridConfig.actions && gridConfig.actions.length>0 ? 1:0)">
+            <td class="no-data" [colSpan]="getColSpan()">
                 {{'noData'|translate}}
             </td>
         </tr>
