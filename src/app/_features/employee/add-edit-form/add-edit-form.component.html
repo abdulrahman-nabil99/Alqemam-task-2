@@ -1,0 +1,105 @@
+<div id="employees-form">
+    <form [formGroup]="form" (submit)="onSubmit()">
+        <div class="form-group margin-20y">
+            <div class="form-input">
+                <input formControlName="fNameAr" [ngClass]="{'invalid-border':invalidField('fNameAr')}" appCustom [patternKey]="patterns.ONLY_ARABIC" 
+                    type="text" [placeholder]="'employee.form.firstNameAr'|translate">
+                    <strong *ngIf="invalidField('fNameAr','required')">
+                        {{'employee.validations.fNameArRequired'|translate}}
+                    </strong>
+            </div>
+            <div class="form-input">
+                <input formControlName="lNameAr" [ngClass]="{'invalid-border':invalidField('lNameAr')}" appCustom [patternKey]="patterns.ONLY_ARABIC" 
+                    type="text" [placeholder]="'employee.form.lastNameAr'|translate">
+                    <strong *ngIf="invalidField('lNameAr','required')">
+                        {{'employee.validations.lNameArRequired'|translate}}
+                    </strong>
+            </div>
+            <div class="form-input">
+                <input formControlName="fNameEn" [ngClass]="{'invalid-border':invalidField('fNameEn')}" appCustom [patternKey]="patterns.ONLY_ENGLISH" 
+                    type="text" [placeholder]="'employee.form.firstNameEn'|translate">
+                    <strong *ngIf="invalidField('fNameEn','required')">
+                        {{'employee.validations.fNameEnRequired'|translate}}
+                    </strong>
+            </div>
+            <div class="form-input">
+                <input formControlName="lNameEn" [ngClass]="{'invalid-border':invalidField('lNameEn')}" appCustom [patternKey]="patterns.ONLY_ENGLISH" 
+                    type="text" [placeholder]="'employee.form.lastNameEn'|translate">
+                    <strong *ngIf="invalidField('lNameEn','required')">
+                        {{'employee.validations.lNameEnRequired'|translate}}
+                    </strong>
+            </div>
+        </div>
+
+
+        <div class="form-group margin-20y">
+            <div class="form-input">
+                <input formControlName="email" [ngClass]="{'invalid-border':invalidField('email')}" appCustom [patternKey]="patterns.EMAIL" 
+                    type="text" [placeholder]="'employee.email'|translate">
+                    <strong *ngIf="invalidField('email','required')">
+                        {{'employee.validations.emailRequired'|translate}}
+                    </strong>
+                    <strong *ngIf="invalidField('email','pattern')">
+                        {{'employee.validations.emailInvalid'|translate}}
+                    </strong>
+                    <strong *ngIf="invalidField('email','emailUsed')">
+                        {{'employee.validations.emailUsed'|translate}}
+                    </strong>
+            </div>
+            <div class="form-input">
+                <input formControlName="mobile" [ngClass]="{'invalid-border':invalidField('mobile')}" appCustom [patternKey]="patterns.ONLY_DIGITS" 
+                    type="text" [placeholder]="'employee.mobile'|translate">
+                    <strong *ngIf="invalidField('mobile','required')">
+                        {{'employee.validations.mobileRequired'|translate}}
+                    </strong>
+                    <strong *ngIf="invalidField('mobile','pattern')">
+                        {{'employee.validations.mobileInvalid'|translate}}
+                    </strong>
+                    <strong *ngIf="invalidField('mobile','mobileUsed')">
+                        {{'employee.validations.mobileUsed'|translate}}
+                    </strong>
+            </div>
+            <div class="form-input">
+                <input formControlName="address" [ngClass]="{'invalid-border':invalidField('address')}" 
+                    type="text" [placeholder]="'employee.address'|translate">
+                    <strong *ngIf="invalidField('address','required')">
+                        {{'employee.validations.addressRequired'|translate}}
+                    </strong>
+            </div>
+            <div class="form-input">
+                <input formControlName="age" [ngClass]="{'invalid-border':invalidField('age')}" 
+                    type="text" [placeholder]="'employee.age'|translate">
+                    <strong *ngIf="invalidField('age','required')">
+                        {{'employee.validations.ageRequired'|translate}}
+                    </strong>
+            </div>
+        </div>
+
+        <div class="form-group margin-20y">
+
+            <div class="form-input w-200px">
+                <app-custom-select class="w-100" formControlName="maritalStatus"
+                    [options]="maritalStatuses"
+                    [placeholder]="'employee.maritalStatus'| translate">
+                </app-custom-select>
+                <strong *ngIf="invalidField('maritalStatus')">
+                    {{'employee.validations.requiredMaritalStatus'|translate}}
+                </strong>
+            </div>
+            <div class="form-input w-200px">
+                <app-custom-select class="w-100" formControlName="department"
+                    [options]="departmentDDL"
+                    [placeholder]="'employee.department'| translate">
+                </app-custom-select>
+                <strong *ngIf="invalidField('department')">
+                    {{'employee.validations.requiredDepartment'|translate}}
+                </strong>
+            </div>
+        </div>
+
+        <div class="submit-area">
+            <button routerLink="employees">{{'backBtn'|translate}}</button>
+            <button type="submit">{{'submit'|translate}}</button>
+        </div>
+    </form>
+</div>

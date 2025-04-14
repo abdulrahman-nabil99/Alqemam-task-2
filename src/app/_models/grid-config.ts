@@ -5,7 +5,8 @@ export interface GridConfig<T> {
     actions?:GridAction[],
     apiService:IAPIService<T>,
     defaultSortingDirection?:string,
-    defaultSortingColumn?:string
+    defaultSortingColumn?:string,
+    uniqueKey:any
 }
 
 export interface GridColumn{

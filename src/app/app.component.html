@@ -2,29 +2,5 @@
   <div>
     <button (click)="changeLang(lang==='en'?'ar':'en')">{{lang==='en'?'عربي':"Englsh"}}</button>
   </div>
-  <h1>{{'title'|translate}}</h1>
-
-  <div class="mode-div">{{'mode'|translate}}
-    <app-custom-select class="ddl"
-      [options]="workingMods"
-      placeholder="Mode"
-      [selectedOption]="selectedMode"
-      [(ngModel)]="selectedMode"
-    ></app-custom-select>
-  </div>
-  <div class="mode-div">{{'selectMode'|translate}}
-    <app-custom-select class="ddl"
-      [options]="selectModes"
-      placeholder="Select Mode"
-      [selectedOption]="selectMode"
-      [(ngModel)]="selectMode"
-    ></app-custom-select>
-  </div>
-  <app-grid [canSelect]="true"
-            [gridConfig]="config"
-            [selectMode]="selectMode"
-            [workingMode]="selectedMode"
-            [pageSize]="10"
-            (actionHandler)="actionHandler($event)"
-  ></app-grid>
+  <router-outlet></router-outlet>
 </main>

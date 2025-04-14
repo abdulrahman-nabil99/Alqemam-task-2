@@ -13,6 +13,7 @@ import { PaginatorComponent } from '../paginator/paginator.component';
 
 @Component({
   selector: 'app-grid',
+  standalone:true,
   imports: [MatIconModule,CommonModule,TranslateModule,MatCheckboxModule,MatPaginatorModule,PaginatorComponent],
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.css'
@@ -25,16 +26,16 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   @Input() pageSize:number =10;
   @Output() actionHandler = new EventEmitter<ActionEvent>()
   
-  selection:number[] = []
+  selection:any[] = []
   dataSource:T[] = []
-  response!:ResponseModel<T>
+  response!:ResponseModel<T[]>
   pageNumber:number =1;
   rowCounts:number =0;
   sortDirection!:string
   sortColumn!:string 
-  langCode!:string
+  langCode:string = localStorage.getItem("lang") ?? "en"
   isAllSelectedChecked:boolean = false
-  excludedRows:number[] = []
+  excludedRows:any[] = []
 
   private subs:Subscription= new Subscription()
   deleting:boolean = false
@@ -85,46 +86,46 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
   }
 
   boxChange(event:MatCheckboxChange,element:T){
-    if (event.checked && !this.selection.includes(element["id"]))
+    if (event.checked && !this.selection.includes(element[this.gridConfig.uniqueKey]))
     {
       if(this.selectMode === SelectMode.ALL_DATA){
-        const exIndex = this.excludedRows.findIndex(id=>id===element["id"])
+        const exIndex = this.excludedRows.findIndex(id=>id===element[this.gridConfig.uniqueKey])
         this.excludedRows.splice(exIndex,1)
       }
-      this.selection.push(element["id"])
+      this.selection.push(element[this.gridConfig.uniqueKey])
     }
     else {
       if(this.selectMode === SelectMode.ALL_DATA){
-        this.excludedRows.push(element["id"])
+        this.excludedRows.push(element[this.gridConfig.uniqueKey])
         if (this.excludedRows.length === this.rowCounts){
           this.resetSelections()
         }
       }
-      const index = this.selection.indexOf(element["id"])
+      const index = this.selection.indexOf(element[this.gridConfig.uniqueKey])
       this.selection.splice(index,1)
     }
   }
 
   elementSelected(element:T){
     if(this.workingMode === WorkingMode.SERVER && this.selectMode === SelectMode.ALL_DATA)
-      return(this.isAllSelectedChecked && !this.excludedRows.some(id=>id===element["id"]))
-    return this.selection.some(id=>id===element["id"])
+      return(this.isAllSelectedChecked && !this.excludedRows.some(id=>id===element[this.gridConfig.uniqueKey]))
+    return this.selection.some(id=>id===element[this.gridConfig.uniqueKey])
   }
 
   masterBoxChange(event:MatCheckboxChange){
     if(event.checked){
       if(this.selectMode == SelectMode.CURRENT_PAGE){
-        const ids:number[] = [...this.selection,...this.dataSource.map(el=>el["id"])]
-        this.selection = [...new Set(ids)]
+        const items:any[] = [...this.selection,...this.dataSource.map(el=>el[this.gridConfig.uniqueKey])]
+        this.selection = [...new Set(items)]
       }
       else if(this.response.data) {
         this.isAllSelectedChecked = true
         this.excludedRows = []
-        this.selection = this.response.data.map(el=>el["id"])
+        this.selection = this.response.data.map(el=>el[this.gridConfig.uniqueKey])
       }
     }else{
       if(this.selectMode == SelectMode.CURRENT_PAGE){
-        const ids = this.dataSource.map(el=>el["id"])
+        const ids = this.dataSource.map(el=>el[this.gridConfig.uniqueKey])
         this.selection = this.selection.filter(id=>!ids.includes(id))
       }else{
         this.isAllSelectedChecked = false
@@ -140,7 +141,7 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     else if (this.selectMode === SelectMode.ALL_DATA && this.workingMode === WorkingMode.SERVER)
       return this.isAllSelectedChecked && this.excludedRows.length <=0
 
-    if (!this.dataSource.every(el=>this.selection.includes(el["id"])))
+    if (!this.dataSource.every(el=>this.selection.includes(el[this.gridConfig.uniqueKey])))
       return false
     // for (let i = 0; i <this.dataSource.length;i++){
     //   if (!this.selection.includes(this.dataSource[i]))

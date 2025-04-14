@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, forwardRef, HostListener, Input, Output} from '@angular/core';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { SelectOption } from '../../_models/shared';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-custom-select',
   imports: [CommonModule, TranslateModule],
@@ -26,12 +26,28 @@ export class CustomSelectComponent implements ControlValueAccessor,Validator {
   @Input() options: SelectOption[] = [];
   @Input() placeholder:string = 'Select';
   @Input() required:boolean = false;
-
-
-  isOpen = false;
   @Input() disabled:boolean = false
   @Input() selectedOption:number = 0
   @Output() onSelectionChange = new EventEmitter<SelectOption>()
+  isOpen = false;
+  langCode!:string
+
+  constructor(
+    translateServise:TranslateService,
+    private elRef: ElementRef
+  ){
+    this.langCode = translateServise.currentLang;
+    translateServise.onLangChange.subscribe(res=>{
+      this.langCode = res.lang
+    })
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.elRef.nativeElement.contains(event.target)) {
+      this.isOpen = false;
+    }
+  }
   onChange = (value: any) => {};
   onTouched = () => {};
 
@@ -62,8 +78,8 @@ export class CustomSelectComponent implements ControlValueAccessor,Validator {
   }
 
   get selectedLabel(): string {
-    const found = this.options.find(opt => opt.id === this.selectedOption);
-    return found ? found.label : this.placeholder;
+    const found = this.options?.find(opt => opt.id === this.selectedOption);
+    return found ? (this.langCode =="ar"?found.labelAr:found.labelEn) : this.placeholder;
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -71,11 +87,11 @@ export class CustomSelectComponent implements ControlValueAccessor,Validator {
   }
 
   validate(control: AbstractControl): ValidationErrors | null {
-    const mode = control.value;
-    if (this.required && mode <= 0) {
+    const value = control.value;
+    if (this.required && value <= 0) {
       return {
         required: {
-          mode
+          value
         }
       };
     }

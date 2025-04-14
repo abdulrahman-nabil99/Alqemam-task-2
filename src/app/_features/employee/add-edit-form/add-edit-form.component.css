@@ -1,0 +1,46 @@
+#employees-form{
+    border: 1px solid #b8b6b659;
+    padding: 20px 30px;
+    margin: 10px 0;
+    width: 100%;
+    border-radius: 4px;
+}
+.form-group{
+    display:  flex;
+    gap: 20px;
+    align-items: center;
+}
+.margin-20y{
+    margin: 20px 0;
+}
+.w-200px{
+    width: 200px;
+}
+.submit-area{
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.form-input{
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    strong{
+        color: red;
+        font-weight: 500;
+        font-size: 13px;
+    }
+}
+input{
+    border: none;
+    border-bottom: 1px solid #6e6d6d79;
+    padding: 3px 5px;
+    width: 100%;
+}
+input:focus{
+    outline: none;
+}
+.invalid-border{
+    border-color: red;
+}

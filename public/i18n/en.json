@@ -1,5 +1,5 @@
 {
-    "title":"Title",
+    "title":"Employees",
     "position":"#",
     "actions":"Actions",
     "edit":"Edit",
@@ -8,11 +8,40 @@
     "selectMode":"Select Mode",
     "noData":"No Data To Show",
     "selectOption":"Select",
+    "backBtn":"Back",
     "selecetMode":"Select Mode",
+    "submit":"Save",
     "employee":{
+        "addEmployee":"Add Employee",
         "name":"Name",
+        "age":"Age",
+        "email":"Email",
         "department":"Department",
-        "age":"Age"
+        "mobile":"Mobile Number",
+        "address":"Address",
+        "maritalStatus":"Marital Status",
+        "form":{
+            "firstNameAr":"First Name in Arabic",
+            "lastNameAr":"Last Name in Arabic",
+            "firstNameEn":"First Name in English",
+            "lastNameEn":"Last Name in English"
+        },
+        "validations":{
+            "requiredDepartment":"Department is required",
+            "requiredMaritalStatus":"Marital Status is required",
+            "fNameArRequired":"First Name in Arabic is required",
+            "lNameArRequired":"Last Name in Arabic is required",
+            "fNameEnRequired":"First Name in English is required",
+            "lNameEnRequired":"Last Name in English is required",
+            "emailRequired":"Email is required",
+            "mobileRequired":"Mobile Number is required",
+            "addressRequired":"Address is required",
+            "ageRequired":"Age is required",
+            "emailInvalid":"Invalid email",
+            "mobileInvalid":"Invalid mobile",
+            "emailUsed":"Email is already in use",
+            "mobileUsed":"Mobile number is already in use"
+        }
     },
     "paginator":{
         "itemsPerPage":"Items per page",

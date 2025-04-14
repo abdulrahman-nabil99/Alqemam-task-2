@@ -1,7 +1,7 @@
 import { WorkingMode } from "../enum/mode";
 
 export interface ResponseModel<T>{
-    data?:T[],
+    data?:T,
     rowCounts:number,
     success:boolean,
     statusCode:number,
@@ -23,7 +23,8 @@ export interface DeleteModel{
 }
 
 export interface SelectOption{
-    label:string,
+    labelAr:string,
+    labelEn:string,
     id:number,
     value:any
 }

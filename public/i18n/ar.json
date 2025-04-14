@@ -1,5 +1,5 @@
 {
-    "title":"عنوان",
+    "title":"الموظفين",
     "position":"م",
     "actions":"الإجراءات",
     "edit":"تعديل",
@@ -9,10 +9,40 @@
     "noData":"لا يوجد بيانات لعرضها",
     "selectOption":"إختر",
     "selecetMode":"",
+    "backBtn":"العودة",
+    "submit":"حفظ",
     "employee":{
+        "addEmployee":"إضافة موظف",
         "name":"الإسم",
         "department":"القسم",
-        "age":"العمر"
+        "age":"العمر",
+        "email":"البريد الإلكتروني",
+        "mobile":"رقم الهاتف",
+        "address":"العنوان",
+        "maritalStatus":"الحالة الإجتماعية",
+        "form":{
+            "firstNameAr":"الإسم الأول بالعربية",
+            "lastNameAr":"الإسم الأخير بالعربية",
+            "firstNameEn":"الإسم الأول بالإنجليزية",
+            "lastNameEn":"الإسم الأخير بالإنجليزية",
+            "mobileUsed":""
+        },
+        "validations":{
+            "requiredDepartment":"القسم مطلوب",
+            "requiredMaritalStatus":"الحالة الإجتماعية مطلوبة",
+            "fNameArRequired":"الإسم الأول بالعربية مطلوب",
+            "lNameArRequired":"الإسم الأخير بالعربية مطلوب",
+            "fNameEnRequired":"الإسم الأول بالإنجليزية مطلوب",
+            "lNameEnRequired":"الإسم الأخير بالإنجليزية مطلوب",
+            "emailRequired":"البريد الإلكتروني مطلوب",
+            "mobileRequired":"رقم الهاتف مطلوب",
+            "addressRequired":"العنوان مطلوب",
+            "ageRequired":"العمر مطلوب",
+            "emailInvalid":"البريد الإلكتروني غير صالح",
+            "mobileInvalid":"رقم الهاتف غير صالح",
+            "emailUsed":"البريد الإلكتروني مستخدم",
+            "mobileUsed":"رقم الهاتف مستخدم"
+        }
     },
     "paginator":{
         "itemsPerPage":"عدد العناصر بالصفحة",

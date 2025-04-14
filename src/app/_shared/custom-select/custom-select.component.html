@@ -10,7 +10,7 @@
       (click)="selectOption(option)"
       [class.selected]="option.value === selectedOption"
     >
-      {{ option.label }}
+      {{ langCode=='ar'? option.labelAr:option.labelEn }}
     </li>
   </ul>
 </div>

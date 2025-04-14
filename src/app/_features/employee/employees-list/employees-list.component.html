@@ -1,0 +1,25 @@
+<h1 class="my-3">{{'title'|translate}}</h1>
+<button routerLink="add">{{'employee.addEmployee'|translate}}</button>
+<div class="mode-div">{{'mode'|translate}}
+    <app-custom-select class="ddl"
+        [options]="workingMods"
+        placeholder="{{'selectOption'| translate}}"
+        [selectedOption]="selectedMode"
+        [(ngModel)]="selectedMode"
+    ></app-custom-select>
+</div>
+<div class="mode-div">{{'selectMode'|translate}}
+    <app-custom-select class="ddl"
+        [options]="selectModes"
+        placeholder="{{'selectOption'| translate}}"
+        [selectedOption]="selectMode"
+        [(ngModel)]="selectMode"
+    ></app-custom-select>
+</div>
+<app-grid   [canSelect]="true"
+            [gridConfig]="config"
+            [selectMode]="selectMode"
+            [workingMode]="selectedMode"
+            [pageSize]="10"
+            (actionHandler)="actionHandler($event)"
+></app-grid>
