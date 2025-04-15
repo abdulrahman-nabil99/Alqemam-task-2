@@ -53,6 +53,9 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     this.sortColumn =this.gridConfig.defaultSortingColumn ?? ""
 
     this.getItems()
+
+    this.gridConfig.apiService.subscribeToSignals()
+    this.gridConfig.apiService.oDataChange((data) => this.onReload(data))
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -66,6 +69,11 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
       this.resetSelections()
     }
     this.cdr.detectChanges()
+  }
+
+  onReload(data:any){
+    if (data)
+      this.getItems()
   }
 
   private resetSelections(){

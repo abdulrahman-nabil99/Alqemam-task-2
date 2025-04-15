@@ -3,14 +3,32 @@ import { Injectable } from '@angular/core';
 import { EmployeeModel, EmployeeView} from '../_models/employee';
 import { DeleteModel, RequestModlel, ResponseModel } from '../_models/shared';
 import { IAPIService } from './iapi.service';
-import { EMPLOYEES_END_POINT } from '../_models/Constants';
+import { EMPLOYEES_END_POINT, EMPLOYEES_HUB } from '../_models/Constants';
+import * as signalR from '@microsoft/signalr';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeeService implements IAPIService<EmployeeView> {
+  private hubConnection!: signalR.HubConnection;
+  constructor(private readonly client:HttpClient) { }
 
-    constructor(private readonly client:HttpClient) { }
+  subscribeToSignals(): void {
+    this.hubConnection = new signalR.HubConnectionBuilder()
+    .withUrl(EMPLOYEES_HUB)
+    .withAutomaticReconnect()
+    .build();
+
+  this.hubConnection
+    .start()
+    .then(() => console.log('Connected To Employees Hub'))
+    .catch(err => console.log('SignalR Error: ', err));
+  }
+
+  oDataChange(callback: (data: any) => void): void {
+    this.hubConnection.on('reload', callback);
+  }
     
   getData(model:RequestModlel){
     return this.client.get<ResponseModel<EmployeeView[]>>(
