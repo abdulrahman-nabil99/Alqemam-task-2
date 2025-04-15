@@ -39,7 +39,9 @@ export class AddEditFormComponent implements OnInit,OnDestroy {
     private router:Router,
     private activatedRoute:ActivatedRoute,
     private employeeValidator: EmployeeValidatorService
-  ){
+  ){  }
+
+  async ngOnInit(): Promise<void> {
     this.subs.add(
       this.activatedRoute.queryParams.subscribe(p=>{
         const id = p["id"]
@@ -48,12 +50,9 @@ export class AddEditFormComponent implements OnInit,OnDestroy {
         }
       })
     )
-  }
-
-
-  async ngOnInit(): Promise<void> {
     await this.initializeComponent()
   }
+
 
   private async initializeComponent(): Promise<void> {
     this.initForm();
@@ -131,16 +130,18 @@ export class AddEditFormComponent implements OnInit,OnDestroy {
   private setFieldValues(){
     if (!this.model)
       return
-    this.form.get("fNameAr")?.setValue(this.model.fNameAr ?? "")
-    this.form.get("lNameAr")?.setValue(this.model.lNameAr ?? "")
-    this.form.get("fNameEn")?.setValue(this.model.fNameEn ?? "")
-    this.form.get("lNameEn")?.setValue(this.model.lNameEn ?? "")
-    this.form.get("email")?.setValue(this.model.email ?? "")
-    this.form.get("mobile")?.setValue(this.model.mobile ?? "")
-    this.form.get("address")?.setValue(this.model.address ?? "")
-    this.form.get("department")?.setValue(this.model.departmentId ?? undefined!)
-    this.form.get("maritalStatus")?.setValue(this.model.maritalStatusId ?? undefined!)
-    this.form.get("age")?.setValue(this.model.age ?? undefined!)
+    this.form.patchValue({
+      fNameAr: this.model.fNameAr ?? "",
+      lNameAr: this.model.lNameAr ?? "",
+      fNameEn: this.model.fNameEn ?? "",
+      lNameEn: this.model.lNameEn ?? "",
+      email: this.model.email ?? "",
+      mobile: this.model.mobile ?? "",
+      address: this.model.address ?? "",
+      department: this.model.departmentId ?? undefined,
+      maritalStatus: this.model.maritalStatusId ?? undefined,
+      age: this.model.age ?? undefined
+    });
   }
 
   onSubmit(){
@@ -149,6 +150,28 @@ export class AddEditFormComponent implements OnInit,OnDestroy {
       return
     const model:EmployeeModel = {
       id: this.model?.id,
+      fNameAr: this.formData.fNameAr,
+      lNameAr: this.formData.lNameAr,
+      fNameEn: this.formData.fNameEn,
+      lNameEn: this.formData.lNameEn,
+      email: this.formData.email,
+      mobile: this.formData.mobile,
+      address: this.formData.address,
+      departmentId: this.formData.departmentId,
+      maritalStatusId: this.formData.maritalStatusId,
+      age: this.formData.age
+    }
+    this.subs.add(
+      this.employeeService.addEdit(model).subscribe(res=>{
+        if (res.data && res.data>0){
+          this.router.navigateByUrl("employees")
+        }
+      })
+    )
+  }
+
+  get formData() {
+    return {
       fNameAr: this.form.get("fNameAr")?.value,
       lNameAr: this.form.get("lNameAr")?.value,
       fNameEn: this.form.get("fNameEn")?.value,
@@ -159,14 +182,7 @@ export class AddEditFormComponent implements OnInit,OnDestroy {
       departmentId: this.form.get("department")?.value,
       maritalStatusId: this.form.get("maritalStatus")?.value,
       age: this.form.get("age")?.value
-    }
-    this.subs.add(
-      this.employeeService.addEdit(model).subscribe(res=>{
-        if (res.data && res.data>0){
-          this.router.navigateByUrl("employees")
-        }
-      })
-    )
+    };
   }
 
   ngOnDestroy(): void {

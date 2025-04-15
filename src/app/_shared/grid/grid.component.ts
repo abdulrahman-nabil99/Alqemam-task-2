@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ActionEvent, GridColumn, GridConfig } from '../../_models/grid-config';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -18,7 +18,7 @@ import { PaginatorComponent } from '../paginator/paginator.component';
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.css'
 })
-export class GridComponent<T extends Record<string, any>> implements OnInit, OnChanges {
+export class GridComponent<T extends Record<string, any>> implements OnInit, OnChanges, OnDestroy {
   @Input() canSelect:boolean = true;
   @Input() gridConfig!:GridConfig<T>
   @Input() selectMode:SelectMode = SelectMode.CURRENT_PAGE
@@ -44,16 +44,17 @@ export class GridComponent<T extends Record<string, any>> implements OnInit, OnC
     private translateService:TranslateService,
     private cdr:ChangeDetectorRef
   ){
-    this.translateService.onLangChange.subscribe(res=>{
-      this.langCode = res.lang
-    })
+
   }
   ngOnInit(): void {
+    this.subs.add(
+      this.translateService.onLangChange.subscribe(res=>{
+        this.langCode = res.lang
+      })
+    )
     this.sortDirection =this.gridConfig.defaultSortingDirection ?? "asc"
     this.sortColumn =this.gridConfig.defaultSortingColumn ?? ""
-
     this.getItems()
-
     this.gridConfig.apiService.subscribeToSignals()
     this.gridConfig.apiService.oDataChange((data) => this.onReload(data))
   }

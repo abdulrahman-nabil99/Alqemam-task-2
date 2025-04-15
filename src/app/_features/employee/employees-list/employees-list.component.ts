@@ -87,8 +87,8 @@ export class EmployeesListComponent implements OnInit,OnDestroy{
         // condition:(element:any)=> element["id"]>3 && element["id"]<15
       }
     ],
-    defaultSortingColumn : "",
-    defaultSortingDirection: "asc"
+    defaultSortingColumn : "id",
+    defaultSortingDirection: "desc"
   }
 
   constructor(

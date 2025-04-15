@@ -24,8 +24,7 @@
             "firstNameAr":"الإسم الأول بالعربية",
             "lastNameAr":"الإسم الأخير بالعربية",
             "firstNameEn":"الإسم الأول بالإنجليزية",
-            "lastNameEn":"الإسم الأخير بالإنجليزية",
-            "mobileUsed":""
+            "lastNameEn":"الإسم الأخير بالإنجليزية"
         },
         "validations":{
             "requiredDepartment":"القسم مطلوب",

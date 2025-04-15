@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, forwardRef, HostListener, Input, Output} from '@angular/core';
+import { Component, ElementRef, EventEmitter, forwardRef, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { SelectOption } from '../../_models/shared';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-custom-select',
   imports: [CommonModule, TranslateModule],
@@ -21,7 +22,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   templateUrl: './custom-select.component.html',
   styleUrl: './custom-select.component.css'
 })
-export class CustomSelectComponent implements ControlValueAccessor,Validator {
+export class CustomSelectComponent implements ControlValueAccessor,Validator,OnInit,OnDestroy {
 
   @Input() options: SelectOption[] = [];
   @Input() placeholder:string = 'Select';
@@ -31,15 +32,21 @@ export class CustomSelectComponent implements ControlValueAccessor,Validator {
   @Output() onSelectionChange = new EventEmitter<SelectOption>()
   isOpen = false;
   langCode!:string
+  private subs = new Subscription()
 
   constructor(
-    translateServise:TranslateService,
+    private translateServise:TranslateService,
     private elRef: ElementRef
   ){
-    this.langCode = translateServise.currentLang;
-    translateServise.onLangChange.subscribe(res=>{
-      this.langCode = res.lang
-    })
+  }
+
+  ngOnInit(): void {
+    this.langCode = this.translateServise.currentLang;
+    this.subs.add(
+      this.translateServise.onLangChange.subscribe(res=>{
+        this.langCode = res.lang
+      })
+    )
   }
 
   @HostListener('document:click', ['$event'])
@@ -99,5 +106,9 @@ export class CustomSelectComponent implements ControlValueAccessor,Validator {
   }
   registerOnValidatorChange?(fn: () => void): void {
     
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe()
   }
 }

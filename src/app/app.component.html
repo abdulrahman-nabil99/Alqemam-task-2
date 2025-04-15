@@ -1,3 +1,7 @@
+<div class="overlay" *ngIf="isLoading">
+  <div class="spinner"></div>
+</div>
+
 <main [dir]="lang=='ar'?'rtl':'ltr'">
   <div>
     <button (click)="changeLang(lang==='en'?'ar':'en')">{{lang==='en'?'عربي':"Englsh"}}</button>
